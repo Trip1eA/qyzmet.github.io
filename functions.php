@@ -1,3 +1,4 @@
+<?php
 function getUserRequest($text, $chat_id) {
   //список приветствий, который понимает бот
   $hello = array();
@@ -37,3 +38,4 @@ function requestToTelegram($data, $type = 'sendMessage') {
     curl_close($curl);
   }
 }
+?>
