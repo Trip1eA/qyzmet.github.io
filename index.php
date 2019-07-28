@@ -1,23 +1,20 @@
 <?php
-//задаём наш токен, полученный при создании бота и указываем путь к API телеграма
-define('BOT_TOKEN', '978553508:AAEheY8odzWSH-6YDJHSAROf0jwBW3sRmTE');
-define('API_URL', 'https://api.telegram.org/bot' . BOT_TOKEN . '/');
-
-include_once './functions.php';
-
-//принимаем запрос от бота(то что напишет в чате пользователь)
-$content = file_get_contents('php://input');
-//превращаем из json в массив
-$update = json_decode($content, TRUE);
-//получаем id чата
-$chat_id = $update['message']['chat']['id'];
-
-//получаем текст запроса
-$text = $update['message']['text'];
-
-//запись в лог
-teleToLog($update);
-
-//обработка запроса
-getUserRequest($text, $chat_id);
+$url="https://api.telegram.org/bot978553508:AAEheY8odzWSH-6YDJHSAROf0jwBW3sRmTE/";
+//читаем результат из стандартного потока, в который PHP записывает полученные данные
+$a=file_get_contents('php://input');
+$content = json_decode($a);
+//получаем значение chat_id – идентификатор чата с пользователем, отправившим сообщение
+$chatID=$update['result'][0]['message']['chat']['id'];
+//Инициализируем новый запрос
+$ch = curl_init();
+//Формируем строку запроса – отправка пользователю сообщения «hello»
+$msg=$url."sendMessage?chat_id=".$chatID."&text=Hello";
+//Настраиваем запрос
+curl_setopt($con, CURLOPT_URL, $msg);
+curl_setopt($con, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($con, CURLOPT_HEADER, 0);
+//Выполняем запрос
+$output = curl_exec($con);
+//Закрываем запрос
+curl_close($con);
 ?>
