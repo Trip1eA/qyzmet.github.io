@@ -99,6 +99,11 @@ END;
 
 		    <div class="col-12">
 		    	<br class="d-none d-sm-inline" />
+				<?php if(empty($_GET['page'])) $_GET['page'] = 1; ?>
+				<p>Сортировать по имени: <a href="?page=<?php echo $_GET['page'] ?>&order_n=desc">убыв.</a> / <a href="?page=<?php echo $_GET['page'] ?>&order_n=asc">возр.</a> </p>
+				<p>Сортировать по почте: <a href="?page=<?php echo $_GET['page'] ?>&order_m=desc">убыв.</a> / <a href="?page=<?php echo $_GET['page'] ?>&order_m=asc">возр.</a> </p>
+				<p>Сортировать по статусу: <a href="?page=<?php echo $_GET['page'] ?>&order_s=desc">убыв.</a> / <a href="?page=<?php echo $_GET['page'] ?>&order_s=asc">возр.</a> </p>
+				<br class="d-none d-sm-inline" />
 
 		    	<table class="table table-hover table-light">
 				  <thead>
@@ -127,9 +132,20 @@ END;
 				$row = mysql_fetch_row($res);
 				$total = $row[0];
 				$str_pag = ceil($total / $kol);
-				$result = mysql_query("SELECT * FROM `zadachi` ORDER BY id DESC LIMIT $art,$kol");
 				
-				echo $_COOKIE['order'];
+				if(!empty($_GET['order_n'])) {
+					if($_GET['order_n'] == 'desc') $result = mysql_query("SELECT * FROM `zadachi` ORDER BY name DESC LIMIT $art,$kol");
+					else $result = mysql_query("SELECT * FROM `zadachi` ORDER BY name ASC LIMIT $art,$kol");
+				}
+				elseif(!empty($_GET['order_m'])) {
+					if($_GET['order_m'] == 'desc') $result = mysql_query("SELECT * FROM `zadachi` ORDER BY mail DESC LIMIT $art,$kol");
+					else $result = mysql_query("SELECT * FROM `zadachi` ORDER BY mail ASC LIMIT $art,$kol");
+				}
+				elseif(!empty($_GET['order_s'])) {
+					if($_GET['order_s'] == 'desc') $result = mysql_query("SELECT * FROM `zadachi` ORDER BY status DESC LIMIT $art,$kol");
+					else $result = mysql_query("SELECT * FROM `zadachi` ORDER BY status ASC LIMIT $art,$kol");
+				}
+				else $result = mysql_query("SELECT * FROM `zadachi` ORDER BY id DESC LIMIT $art,$kol");
 				
 				$myrow = mysql_fetch_array($result);
 				if(!empty($myrow)) {
@@ -153,19 +169,27 @@ END;
 				<br class="d-none d-sm-inline" />
 				<p class="text-center pagi"> Пагинация: 
 				<?php
-
+					
 				for ($i = 1; $i <= $str_pag; $i++){
 					if(isset($_GET["page"])) {
-					if($i == $_GET["page"]) {
-						echo "...";
-					}
-					else {
-						echo " <a href=?page=".$i."> ".$i." </a> ";
-					}
+						if($i == $_GET["page"]) {
+							echo "...";
+						}
+						else {
+							if(!empty($_GET['order_n'])) echo " <a href=?order_n=".$_GET['order_n']."&page=".$i."> ".$i." </a> ";
+							elseif(!empty($_GET['order_m'])) echo " <a href=?order_m=".$_GET['order_m']."&page=".$i."> ".$i." </a> ";
+							elseif(!empty($_GET['order_s'])) echo " <a href=?order_s=".$_GET['order_s']."&page=".$i."> ".$i." </a> ";
+							else echo " <a href=?page=".$i."> ".$i." </a> ";
+						}
 					}
 					else {
 						if($i==1){echo "...";}
-						else echo " <a href=?page=".$i."> ".$i." </a> ";
+						else {
+							if(!empty($_GET['order_n'])) echo " <a href=?order_n=".$_GET['order_n']."&page=".$i."> ".$i." </a> ";
+							elseif(!empty($_GET['order_m'])) echo " <a href=?order_m=".$_GET['order_m']."&page=".$i."> ".$i." </a> ";
+							elseif(!empty($_GET['order_s'])) echo " <a href=?order_s=".$_GET['order_s']."&page=".$i."> ".$i." </a> ";
+							else echo " <a href=?page=".$i."> ".$i." </a> ";
+						}
 					}
 				}
 				?>
